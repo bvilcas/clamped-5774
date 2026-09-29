@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Illustration: the two-person rule. The teammate who fixes a ticket cannot be the
+  teammate who verifies it, so sign-off always needs a second person.
+  Original artwork created by Brent Vilcas for CS 5774 Project 2. Not sourced externally.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 240" width="520" height="240" role="img">
+  <title>One teammate patches the ticket, a different teammate verifies it</title>
+
+  <rect width="520" height="240" rx="18" fill="#f9fafb"/>
+
+  <!-- Assignee side -->
+  <g>
+    <circle cx="130" cy="92" r="34" fill="#bfdbfe"/>
+    <text x="130" y="101" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="22" font-weight="600" fill="#1e3a8a">BV</text>
+    <text x="130" y="152" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="15" font-weight="600" fill="#111827">Assignee</text>
+    <text x="130" y="174" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="13" fill="#6b7280">Patches the bug</text>
+  </g>
+
+  <!-- Verifier side -->
+  <g>
+    <circle cx="390" cy="92" r="34" fill="#dcfce7"/>
+    <text x="390" y="101" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="22" font-weight="600" fill="#14532d">PN</text>
+    <text x="390" y="152" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="15" font-weight="600" fill="#111827">Verifier</text>
+    <text x="390" y="174" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="13" fill="#6b7280">Confirms the fix</text>
+  </g>
+
+  <!-- The handoff, and the blocked self-signoff -->
+  <path d="M176 92 H344" fill="none" stroke="#9ca3af" stroke-width="3" stroke-linecap="round"/>
+  <path d="M330 84 l14 8 l-14 8" fill="none" stroke="#9ca3af" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="260" y="78" text-anchor="middle" font-family="system-ui, sans-serif"
+        font-size="13" fill="#6b7280">hands off</text>
+
+  <g>
+    <rect x="150" y="196" width="220" height="28" rx="14" fill="#fee2e2"/>
+    <text x="260" y="215" text-anchor="middle" font-family="system-ui, sans-serif"
+          font-size="13" font-weight="600" fill="#7f1d1d">Same person on both: blocked</text>
+  </g>
+</svg>

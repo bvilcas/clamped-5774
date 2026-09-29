@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search Results - Clamped</title>
+    <meta name="description"
+          content="Results for a search across your Clamped issues.">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="images/clamped-logo.png">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class="sidebar__logo" href="dashboard.html">
+                <img src="images/clamped-logo.png" alt="Clamped" width="104" height="55">
+            </a>
+
+            <nav>
+                <ul>
+                    <li>
+                        <a class="nav-item" href="dashboard.html">
+                            <span class="icon icon--dashboard"></span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="list.html">
+                            <span class="icon icon--issues"></span> My Issues
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="add.html">
+                            <span class="icon icon--report"></span> Report Issue
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Where the app goes next. Both are listed so the shape of the app
+                     stays visible, and both are spans rather than links, because
+                     neither has a page in this prototype and no link should lead
+                     nowhere. -->
+                <p class="section-label">More</p>
+                <ul class="sidebar__secondary">
+                    <li><span class="nav-item">
+                        <span class="icon icon--projects"></span> Projects</span></li>
+                    <li><span class="nav-item">
+                        <span class="icon icon--calendar"></span> Calendar</span></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar__footer">
+                <a class="btn btn--error btn--block" href="index.html">Logout</a>
+            </div>
+        </aside>
+
+        <div class="app-main">
+
+            <!-- Top bar. The same search form as every other page, so a second
+                 search can be run from the results themselves. -->
+            <header class="topbar">
+                <form class="topbar__search" action="search.html" method="get">
+                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                    <input type="search" id="topbar-search" name="q"
+                           placeholder="Search issues - try: payment">
+                </form>
+
+                <div class="topbar__actions">
+                    <!-- Both of these open a menu in the finished app. Nothing here. -->
+                    <button type="button" class="topbar__icon" title="Notifications">
+                        <span class="icon icon--bell"></span>
+                        <span class="notif__count">3</span>
+                        <span class="visually-hidden">Notifications, 3 unread</span>
+                    </button>
+                    <button type="button" class="topbar__icon" title="Settings">
+                        <span class="icon icon--settings"></span>
+                        <span class="visually-hidden">Settings</span>
+                    </button>
+                    <!-- Images 4-6 of 6: the three avatars. Original artwork by Brent Vilcas. -->
+                    <img class="avatar" src="images/avatar-bv.svg"
+                         alt="Your account: Brent Vilcas" width="32" height="32">
+                </div>
+            </header>
+
+            <!-- Search results. The top bar's form submits here with GET, so the
+                 phrase arrives in the query string as ?q=... and js/main.js reads
+                 it, decides what to show, and builds the whole of #search-output.
+                 Nothing below the heading is written by hand. -->
+            <main class="app-content" id="main">
+                <nav class="breadcrumb">
+                    <ol>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="list.html">My Issues</a></li>
+                        <li><span class="is-current">Search</span></li>
+                    </ol>
+                </nav>
+
+                <div class="title-row">
+                    <div>
+                        <h1 class="text-info">Search Results</h1>
+                        <p class="text-secondary" id="search-summary">
+                            Type a phrase in the search box above to look through your issues.
+                        </p>
+                    </div>
+                    <a class="btn btn--block-mobile" href="list.html">Back to My Issues</a>
+                </div>
+
+                <!-- Filled by js/main.js: either a table of matching issues or a
+                     friendly message saying nothing matched. -->
+                <div id="search-output"></div>
+            </main>
+
+            <footer class="landing-footer">
+                <div class="landing-footer__inner">
+                    <p>Clamped</p>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="list.html">My Issues</a></li>
+                        <li><a href="add.html">Report Issue</a></li>
+                        <li><a href="detail.html">Example issue</a></li>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- jQuery first, then this project's own behaviour. Both are external
+         files; there are no inline or embedded scripts anywhere. -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

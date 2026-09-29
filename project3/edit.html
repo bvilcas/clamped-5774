@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit CLM-139 - Clamped</title>
+    <meta name="description"
+          content="Change the title, description, severity or due date of a Clamped issue.">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="images/clamped-logo.png">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class="sidebar__logo" href="dashboard.html">
+                <img src="images/clamped-logo.png" alt="Clamped" width="104" height="55">
+            </a>
+
+            <nav>
+                <ul>
+                    <li>
+                        <a class="nav-item" href="dashboard.html">
+                            <span class="icon icon--dashboard"></span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item nav-item-active" href="list.html">
+                            <span class="icon icon--issues"></span> My Issues
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="add.html">
+                            <span class="icon icon--report"></span> Report Issue
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Where the app goes next. Both are listed so the shape of the app
+                     stays visible, and both are spans rather than links, because
+                     neither has a page in this prototype. -->
+                <p class="section-label">More</p>
+                <ul class="sidebar__secondary">
+                    <li><span class="nav-item">
+                        <span class="icon icon--projects"></span> Projects</span></li>
+                    <li><span class="nav-item">
+                        <span class="icon icon--calendar"></span> Calendar</span></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar__footer">
+                <a class="btn btn--error btn--block" href="index.html">Logout</a>
+            </div>
+        </aside>
+
+        <div class="app-main">
+
+            <!-- Top bar -->
+            <header class="topbar">
+                <form class="topbar__search" action="list.html" method="get">
+                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                    <input type="search" id="topbar-search" name="q"
+                           placeholder="Search issues - try: payment">
+                </form>
+
+                <div class="topbar__actions">
+                    <!-- Both of these open a menu in the finished app. Nothing here. -->
+                    <button type="button" class="topbar__icon" title="Notifications">
+                        <span class="icon icon--bell"></span>
+                        <span class="notif__count">3</span>
+                        <span class="visually-hidden">Notifications, 3 unread</span>
+                    </button>
+                    <button type="button" class="topbar__icon" title="Settings">
+                        <span class="icon icon--settings"></span>
+                        <span class="visually-hidden">Settings</span>
+                    </button>
+                    <!-- Images 4-6 of 6: the three avatars. Original artwork by Brent Vilcas. -->
+                    <img class="avatar" src="images/avatar-bv.svg"
+                         alt="Your account: Brent Vilcas" width="32" height="32">
+                </div>
+            </header>
+
+            <!-- Editing an issue is the report form again, with the same fields in the
+                 same two columns, so there is nothing new to learn. What differs is
+                 which fields are closed: the project an issue belongs to, the payload
+                 carried over from its event group, and the status, which moves through
+                 the action bar on the issue page rather than through a select here.
+                 The report form is rendered mid-error; this one is rendered clean. -->
+            <main class="app-content" id="main">
+                <nav class="breadcrumb">
+                    <ol>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="list.html">My Issues</a></li>
+                        <li><a href="detail.html">CLM-139</a></li>
+                        <li><span class="is-current">Edit</span></li>
+                    </ol>
+                </nav>
+
+                <div class="title-row">
+                    <div>
+                        <h1 class="text-info">Edit CLM-139</h1>
+                        <p class="text-secondary">
+                            Any member can change these. Greyed fields say why they cannot.
+                        </p>
+                    </div>
+                    <div class="btn-row">
+                        <a class="btn btn--block-mobile" href="detail.html">Back to CLM-139</a>
+                    </div>
+                </div>
+
+                <form action="detail.html" method="get">
+                    <div class="form-columns">
+                        <div>
+
+                            <fieldset>
+                                <legend>Basics</legend>
+
+                                <!-- An issue cannot move between projects: its event group,
+                                     its members and its roles all belong to this one. The
+                                     key sits beside it, since neither can be edited. -->
+                                <div class="field-pair">
+                                    <div class="form-field">
+                                        <label for="edit-key">Key</label>
+                                        <input type="text" id="edit-key" name="key"
+                                               value="CLM-139" readonly>
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="edit-project">Project</label>
+                                        <input type="text" id="edit-project" name="project"
+                                               value="checkout-service" readonly>
+                                    </div>
+                                </div>
+                                <span class="form-hint">
+                                    An issue keeps its key and stays in the project it was filed in.
+                                </span>
+
+                                <div class="form-field">
+                                    <label for="edit-title">
+                                        Title <span class="required-mark">*</span>
+                                        <span class="visually-hidden">(required)</span>
+                                    </label>
+                                    <input type="text" id="edit-title" name="title" required
+                                           maxlength="120"
+                                           value="NullPointerException in PaymentService.processPayment">
+                                </div>
+
+                                <!-- Three rows rather than the report form's two: this one
+                                     arrives with 370 characters already in it, and editing
+                                     what you cannot see is worse than the height it costs. -->
+                                <div class="form-field">
+                                    <label for="edit-description">Description</label>
+                                    <textarea id="edit-description" name="description" rows="3">Checkout fails when a saved card has no billing address. PaymentService.processPayment reads address.getPostalCode() without a null check, so the request dies at line 42 and the customer sees a generic 500 page instead of a card error. Only cards imported from the old provider are affected, which is why the checkout tests missed it.</textarea>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Classification</legend>
+
+                                <!-- Four fixed values, so all of them are worth showing at once. -->
+                                <fieldset class="radio-set">
+                                    <legend>
+                                        Severity <span class="required-mark">*</span>
+                                        <span class="visually-hidden">(required)</span>
+                                    </legend>
+
+                                    <div class="radio-row">
+                                        <input type="radio" id="edit-sev-low" name="severity" value="LOW">
+                                        <label for="edit-sev-low">Low</label>
+
+                                        <input type="radio" id="edit-sev-medium" name="severity" value="MEDIUM">
+                                        <label for="edit-sev-medium">Medium</label>
+
+                                        <input type="radio" id="edit-sev-high" name="severity" value="HIGH">
+                                        <label for="edit-sev-high">High</label>
+
+                                        <input type="radio" id="edit-sev-critical" name="severity"
+                                               value="CRITICAL" checked>
+                                        <label for="edit-sev-critical">Critical</label>
+                                    </div>
+                                </fieldset>
+                                <span class="form-hint">
+                                    Critical means customers cannot complete a core task right now.
+                                </span>
+
+                                <!-- Status and Due At share a row here, the same way they do on
+                                     the report form. The difference is that status is not a
+                                     field: a workflow with one order is not a dropdown, and a
+                                     select would let somebody skip three states in one save. -->
+                                <div class="field-pair">
+                                    <div class="form-field">
+                                        <span class="field-label">Status</span>
+                                        <p class="static-value">
+                                            <span class="chip status-patched">PATCHED</span>
+                                            <a href="detail.html">Move it</a>
+                                        </p>
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="edit-due">
+                                            Due At <span class="required-mark">*</span>
+                                            <span class="visually-hidden">(required)</span>
+                                        </label>
+                                        <input type="date" id="edit-due" name="dueAt" value="2026-09-24"
+                                               required min="2026-09-22">
+                                    </div>
+                                </div>
+                                <span class="form-hint">
+                                    Status moves one step at a time, from the issue page.
+                                </span>
+                            </fieldset>
+                        </div>
+
+                        <div>
+                            <fieldset>
+                                <legend>Linked Code</legend>
+
+                                <div class="field-pair">
+                                    <div class="form-field">
+                                        <label for="edit-repo">Repository</label>
+                                        <input type="text" id="edit-repo" name="repository"
+                                               placeholder="e.g. github.com/org/repo"
+                                               value="clamped/checkout-service">
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="edit-commit">Commit / PR ID</label>
+                                        <input type="text" id="edit-commit" name="commitHash"
+                                               placeholder="e.g. abc1234 or PR#42" value="a91c4f2">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Read-only, because these four are what the agent recorded at
+                                 the crash. Editing them would make the issue disagree with
+                                 the event group it was promoted from. -->
+                            <fieldset>
+                                <legend>Event Details</legend>
+                                <p class="form-hint">
+                                    Recorded at the crash, 54 occurrences since 9/18/2026, so these
+                                    are read rather than edited.
+                                </p>
+
+                                <div class="field-pair">
+                                    <div class="form-field">
+                                        <label for="edit-event-app">App</label>
+                                        <input type="text" id="edit-event-app" name="eventApp"
+                                               value="checkout-service" readonly>
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="edit-event-host">Host</label>
+                                        <input type="text" id="edit-event-host" name="eventHost"
+                                               value="prod-checkout-02" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="field-pair">
+                                    <div class="form-field">
+                                        <label for="edit-event-type">Event Type</label>
+                                        <input type="text" id="edit-event-type" name="eventType"
+                                               value="java.lang.NullPointerException" readonly>
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="edit-event-extra">Extra</label>
+                                        <input type="text" id="edit-event-extra" name="eventExtra" readonly
+                                               value='{"sourceLine": 42}'>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Cancel sits next to Save, the same way it does on the report
+                                 form: there is always a way out that changes nothing. -->
+                            <div class="form-footer">
+                                <div class="checkbox-field">
+                                    <input type="checkbox" id="edit-notify" name="notify" checked>
+                                    <label for="edit-notify">Notify the project of this change.</label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <a class="btn btn--lg" href="detail.html">Cancel</a>
+                                    <button type="reset" class="btn btn--lg">Revert</button>
+                                    <button type="submit" class="btn btn--info btn--lg">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+
+            <footer class="landing-footer">
+                <div class="landing-footer__inner">
+                    <p>Clamped</p>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="list.html">My Issues</a></li>
+                        <li><a href="add.html">Report Issue</a></li>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- jQuery first, then this project's own behaviour. Both are external
+         files; there are no inline or embedded scripts anywhere. -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

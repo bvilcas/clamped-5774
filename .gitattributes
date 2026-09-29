@@ -1,0 +1,7 @@
+# Store text with LF so the repo reads the same on Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Binary: never touch these.
+*.png binary
+*.zip binary
+*.pdf binary

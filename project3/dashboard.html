@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Where You Left Off - Clamped</title>
+    <meta name="description"
+          content="Your Clamped dashboard: recent reports, issues assigned to you, verifications, and your projects.">
+
+    <!-- Roboto for interface text, Roboto Mono for issue keys and payloads.
+         Both have system fallbacks in style.css. -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="images/clamped-logo.png">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- Page shell that is the same in all five wireframes -->
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class="sidebar__logo" href="dashboard.html">
+                <img src="images/clamped-logo.png" alt="Clamped" width="104" height="55">
+            </a>
+
+            <nav>
+                <ul>
+                    <li>
+                        <a class="nav-item nav-item-active" href="dashboard.html">
+                            <span class="icon icon--dashboard"></span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="list.html">
+                            <span class="icon icon--issues"></span> My Issues
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="add.html">
+                            <span class="icon icon--report"></span> Report Issue
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Additional sections. Projects and Calendar are slots that 
+                     could be filled with content. They are visible as buttons/
+                     span rather than a link, and clicking leads nowhere. -->
+                <p class="section-label">More</p>
+                <ul class="sidebar__secondary">
+                    <li><span class="nav-item">
+                        <span class="icon icon--projects"></span> Projects</span></li>
+                    <li><span class="nav-item">
+                        <span class="icon icon--calendar"></span> Calendar</span></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar__footer">
+                <a class="btn btn--error btn--block" href="index.html">Logout</a>
+            </div>
+        </aside>
+
+        <div class="app-main">
+
+            <!-- Top bar -->
+            <header class="topbar">
+                <form class="topbar__search" action="list.html" method="get">
+                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                    <input type="search" id="topbar-search" name="q"
+                           placeholder="Search issues - try: payment">
+                </form>
+
+                <div class="topbar__actions">
+                    <!-- Bell represents notifs while gear is settings -->
+                    <button type="button" class="topbar__icon" title="Notifications">
+                        <span class="icon icon--bell"></span>
+                        <span class="notif__count">3</span>
+                        <span class="visually-hidden">Notifications, 3 unread</span>
+                    </button>
+                    <button type="button" class="topbar__icon" title="Settings">
+                        <span class="icon icon--settings"></span>
+                        <span class="visually-hidden">Settings</span>
+                    </button>
+                    <!-- Images 4-6 of 6: the three avatars. Original artwork by Brent Vilcas. -->
+                    <img class="avatar" src="images/avatar-bv.svg"
+                         alt="Your account: Brent Vilcas" width="32" height="32">
+                </div>
+            </header>
+
+            <!-- Dashboard roughly the size of the screen. Counters inline with the title,
+                 single-line rows in the cards, and the triage queue sharing a row
+                 with the project list. -->
+            <main class="app-content" id="main">
+
+                <div class="title-row">
+                    <h1 class="text-info">Where You Left Off</h1>
+                    <div class="stats-bar">
+                        <span>Open Issues: <strong>12</strong></span>
+                        <span>Patched: <strong>5</strong></span>
+                        <span>Overdue: <strong>2</strong></span>
+                        <span>Waiting on you: <strong>3</strong></span>
+                    </div>
+                </div>
+
+                <!-- My Issues: three lists, split by the role you hold on each issue.
+                     Reported, assigned, verified. -->
+                <div class="section-header">
+                    <h2>My Issues</h2>
+                    <a class="btn btn--info" href="add.html">+ Report Issue</a>
+                </div>
+
+                <div class="card-row">
+                    <section class="card">
+                        <h3 class="card__title">Recent Reports</h3>
+                        <div class="card__text">
+                            <ul class="item-list">
+                                <li>
+                                    <a class="truncate" href="detail.html">Rate limit exceeded for client IP 198.51.100.22</a>
+                                    <span class="chip status-reported">Reported</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Refresh token retry storm on expiry</a>
+                                    <span class="chip status-in-progress">In Progress</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Due date picker accepts past dates</a>
+                                    <span class="chip status-reported">Reported</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Calendar day numbers unreadable</a>
+                                    <span class="chip status-under-review">Under Review</span>
+                                </li>
+                            </ul>
+                            <p class="text-caption"><a href="list.html">See all 8 reported</a></p>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h3 class="card__title">Assigned to You</h3>
+                        <div class="card__text">
+                            <ul class="item-list">
+                                <li>
+                                    <a class="truncate" href="detail.html">NullPointerException in PaymentService</a>
+                                    <span class="chip status-patched">Patched</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Team page loads member lists one at a time</a>
+                                    <span class="chip status-in-progress">In Progress</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Session cookie not cleared after logout</a>
+                                    <span class="chip status-patched">Patched</span>
+                                </li>
+                            </ul>
+                            <p class="text-caption"><a href="list.html">See all 3 assigned</a></p>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h3 class="card__title">Verified by You</h3>
+                        <div class="card__text">
+                            <ul class="item-list">
+                                <li>
+                                    <a class="truncate" href="detail.html">Duplicate notification emails on role change</a>
+                                    <span class="chip status-verified">Verified</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="detail.html">Stale project list after leaving a project</a>
+                                    <span class="chip status-verified">Verified</span>
+                                </li>
+                            </ul>
+                            <p class="text-caption"><a href="list.html">See all 5 verified</a></p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Triage queue and projects. Two panels on one row rather than another
+                     three cards, which keeps the page to one screen. -->
+                <div class="row-split">
+                    <section class="card">
+                        <h2 class="card__title">Event Groups to Triage</h2>
+                        <div class="card__text">
+                            <ul class="item-list">
+                                <li>
+                                    <span class="mono truncate">RateLimitExceededException</span>
+                                    <span class="event-flag">320 events</span>
+                                    <a class="btn btn--sm" href="add.html">Promote</a>
+                                </li>
+                                <li>
+                                    <span class="mono truncate">TimeoutException: billing provider</span>
+                                    <span class="event-flag">12 events</span>
+                                    <a class="btn btn--sm" href="add.html">Promote</a>
+                                </li>
+                                <li>
+                                    <span class="mono truncate">ValidationError: dueAt in past</span>
+                                    <span class="event-flag">7 events</span>
+                                    <a class="btn btn--sm" href="add.html">Promote</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                                                <div class="card__header">
+                            <h2 class="card__title">My Projects</h2>
+                            <button type="button" class="btn btn--sm btn--info">+ Create Project</button>
+                        </div>
+                        <div class="card__text">
+                            <ul class="item-list">
+                                <li>
+                                    <a class="truncate" href="list.html">api-gateway</a>
+                                    <span class="text-caption">5 open</span>
+                                    <span class="chip chip--role">Lead</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="list.html">checkout-service</a>
+                                    <span class="text-caption">4 open</span>
+                                    <span class="chip chip--role">Lead</span>
+                                </li>
+                                <li>
+                                    <a class="truncate" href="list.html">clamped-web</a>
+                                    <span class="text-caption">3 open</span>
+                                    <span class="chip">Member</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <footer class="landing-footer">
+                <div class="landing-footer__inner">
+                    <p>Clamped</p>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="list.html">My Issues</a></li>
+                        <li><a href="add.html">Report Issue</a></li>
+                        <li><a href="detail.html">Example issue</a></li>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- jQuery first, then this project's own behaviour. Both are external
+         files; there are no inline or embedded scripts anywhere. -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
