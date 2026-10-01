@@ -100,7 +100,7 @@ function showFilterChips() {
 
         // .parent(): go up to the field around the dropdown and find its label.
         // Then find the option picked, e.g. "Project: clamped-web".
-        // Referenced from the demo slides.
+        // Referenced from the lecture slides.
         label = elem.parent().find( "label" ).text();
         choice = elem.find( "option:selected" ).text();
         chips.append(
