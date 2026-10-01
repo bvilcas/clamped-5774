@@ -41,10 +41,8 @@
                     </li>
                 </ul>
 
-                <!-- Where the app goes next. Both are listed so the shape of the app
-                     stays visible, and both are spans rather than links, because
-                     neither has a page in this prototype and no link should lead
-                     nowhere. -->
+                <!-- Additional sections. Projects and Calendar have no page yet,
+                     so they are plain text rather than links. -->
                 <p class="section-label">More</p>
                 <ul class="sidebar__secondary">
                     <li><span class="nav-item">
@@ -61,17 +59,17 @@
 
         <div class="app-main">
 
-            <!-- Top bar. The same search form as every other page, so a second
-                 search can be run from the results themselves. -->
+            <!-- Top bar. The same search form as the other app pages. -->
             <header class="topbar">
                 <form class="topbar__search" action="search.html" method="get">
-                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                    <label class="visually-hidden" for="topbar-search">Search issues</label>
                     <input type="search" id="topbar-search" name="q"
                            placeholder="Search issues - try: payment">
+                    <button type="submit" class="btn btn--info topbar__submit">Search</button>
                 </form>
 
                 <div class="topbar__actions">
-                    <!-- Both of these open a menu in the finished app. Nothing here. -->
+                    <!-- Both of these would open a menu in a later app iteration. Nothing here. -->
                     <button type="button" class="topbar__icon" title="Notifications">
                         <span class="icon icon--bell"></span>
                         <span class="notif__count">3</span>
@@ -87,10 +85,9 @@
                 </div>
             </header>
 
-            <!-- Search results. The top bar's form submits here with GET, so the
-                 phrase arrives in the query string as ?q=... and js/main.js reads
-                 it, decides what to show, and builds the whole of #search-output.
-                 Nothing below the heading is written by hand. -->
+            <!-- Search results. The top bar's form submits with a GET request, and the
+                 phrase arrives in the query string as ?q=... js/main.js reads
+                 it and decides which of the two blocks below to display. -->
             <main class="app-content" id="main">
                 <nav class="breadcrumb">
                     <ol>
@@ -110,9 +107,71 @@
                     <a class="btn btn--block-mobile" href="list.html">Back to My Issues</a>
                 </div>
 
-                <!-- Filled by js/main.js: either a table of matching issues or a
-                     friendly message saying nothing matched. -->
-                <div id="search-output"></div>
+                <!-- Both outcomes are written here and hidden by the stylesheet.
+                     js/main.js reads the phrase and shows only one of them. -->
+                <div id="search-results">
+                    <table class="issue-table">
+                        <caption class="visually-hidden">
+                            Issues matching your search, with key, title, project, severity,
+                            status, owner and due date.
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-key">Key</th>
+                                <th scope="col" class="col-issue">Issue</th>
+                                <th scope="col" class="col-project">Project</th>
+                                <th scope="col" class="col-sev">Severity</th>
+                                <th scope="col" class="col-status">Status</th>
+                                <th scope="col" class="col-who">Owner</th>
+                                <th scope="col" class="col-due">Due</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ticket-key">CLM-148</td>
+                                <td>
+                                    <a class="issue-table__title" href="detail.html">Checkout returns 500 when a saved card has no billing address</a>
+                                </td>
+                                <td>checkout-service</td>
+                                <td><span class="chip severity-critical">CRITICAL</span></td>
+                                <td><span class="chip status-reported">REPORTED</span></td>
+                                <td>
+                                    <span class="owner">
+                                        <img class="avatar avatar--sm" src="images/avatar-bv.svg" alt="" width="24" height="24">
+                                        You reported it
+                                    </span>
+                                </td>
+                                <td>9/28/2026</td>
+                            </tr>
+
+                            <tr>
+                                <td class="ticket-key">CLM-139</td>
+                                <td>
+                                    <a class="issue-table__title" href="detail.html">NullPointerException in PaymentService.processPayment</a>
+                                    <span class="event-flag" title="Occurrences recorded on this issue">54 events</span>
+                                </td>
+                                <td>checkout-service</td>
+                                <td><span class="chip severity-critical">CRITICAL</span></td>
+                                <td><span class="chip status-patched">PATCHED</span></td>
+                                <td>
+                                    <span class="owner">
+                                        <img class="avatar avatar--sm" src="images/avatar-bv.svg" alt="" width="24" height="24">
+                                        You patched it
+                                    </span>
+                                </td>
+                                <td>9/24/2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert" id="search-empty">
+                    <p>
+                        <strong>No results found.</strong> Nothing in your projects matches that
+                        phrase. Search is simulated in this prototype, so try "payment" to see a
+                        result set, or <a href="list.html">browse all issues</a> instead.
+                    </p>
+                </div>
             </main>
 
             <footer class="landing-footer">
@@ -130,8 +189,8 @@
         </div>
     </div>
 
-    <!-- jQuery first, then this project's own behaviour. Both are external
-         files; there are no inline or embedded scripts anywhere. -->
+    <!-- jQuery first, then this project's script. Both are external files;
+         there are no inline or embedded scripts. -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/main.js"></script>
 </body>

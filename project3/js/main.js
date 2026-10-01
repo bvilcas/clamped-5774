@@ -1,478 +1,279 @@
 /* Clamped
-   Behaviour for the seven pages: the simulated search, the issue list filter,
-   and the issue workflow. One file, linked everywhere, jQuery only. */
+   Adds Page Behavior: the simulated search, the issue list filter,
+   and the issue workflow. Interactive capabilities from jQuery. */
 
 
-/* Sample data */
-/* No backend yet, so the issues the search can return live here. Each one
-   matches a row that already exists on list.html. */
-var ISSUES = [
-    {
-        key: 'CLM-148', title: 'Checkout returns 500 when a saved card has no billing address',
-        project: 'checkout-service', severity: 'CRITICAL', status: 'REPORTED', due: '9/28/2026'
-    },
-    {
-        key: 'CLM-139', title: 'NullPointerException in PaymentService.processPayment',
-        project: 'checkout-service', severity: 'CRITICAL', status: 'PATCHED', due: '9/24/2026'
-    },
-    {
-        key: 'CLM-137', title: 'Session cookie is not cleared after logout',
-        project: 'clamped-web', severity: 'HIGH', status: 'PATCHED', due: '9/26/2026'
-    },
-    {
-        key: 'CLM-134', title: 'Refresh token retry storm when the access token expires',
-        project: 'api-gateway', severity: 'HIGH', status: 'IN_PROGRESS', due: '10/1/2026'
-    }
-];
-
-/* The phrase the search recognises. Every search box suggests it. */
-var KEYPHRASE = 'payment';
-
-/* Listed so one call clears whichever status a chip is currently wearing. */
-var STATUS_CLASSES = 'status-reported status-in-progress status-patched ' +
-                     'status-under-review status-verified';
-
-/* CRITICAL becomes severity-critical, IN_PROGRESS becomes status-in-progress. */
-function chipClass(prefix, code) {
-    return prefix + '-' + code.toLowerCase().replace('_', '-');
-}
-
-
-/* Simulated search */
-/* The top bar form is a GET pointing at search.html, so the phrase arrives in
-   the query string. A switch decides whether it is recognised. */
-
-/* One results row. Built with jQuery so the issue text goes in as text and
-   cannot be mistaken for markup. */
-function buildResultRow(issue) {
-    var row = $('<tr>');
-
-    row.append($('<td>').addClass('ticket-key').text(issue.key));
-
-    var titleLink = $('<a>').addClass('issue-table__title')
-                            .attr('href', 'detail.html')
-                            .text(issue.title);
-    row.append($('<td>').append(titleLink));
-
-    row.append($('<td>').text(issue.project));
-
-    row.append($('<td>').append(
-        $('<span>').addClass('chip ' + chipClass('severity', issue.severity))
-                   .text(issue.severity)
-    ));
-
-    row.append($('<td>').append(
-        $('<span>').addClass('chip ' + chipClass('status', issue.status))
-                   .text(issue.status.replace('_', ' '))
-    ));
-
-    row.append($('<td>').text(issue.due));
-
-    return row;
-}
-
-/* The whole results table, same shape as the one on the issue list. */
-function buildResultsTable(matches) {
-    var table = $('<table>').addClass('issue-table');
-    var headings = ['Key', 'Issue', 'Project', 'Severity', 'Status', 'Due'];
-    var headRow = $('<tr>');
-    var body = $('<tbody>');
-    var i;
-
-    table.append($('<caption>').addClass('visually-hidden').text(
-        'Issues matching your search, with key, title, project, severity, status and due date.'
-    ));
-
-    for (i = 0; i < headings.length; i++) {
-        headRow.append($('<th>').attr('scope', 'col').text(headings[i]));
-    }
-    table.append($('<thead>').append(headRow));
-
-    for (i = 0; i < matches.length; i++) {
-        body.append(buildResultRow(matches[i]));
-    }
-    table.append(body);
-
-    return table;
-}
-
-/* Every issue belonging to one project. */
-function issuesInProject(projectName) {
-    var found = [];
-    var i;
-    for (i = 0; i < ISSUES.length; i++) {
-        if (ISSUES[i].project === projectName) {
-            found.push(ISSUES[i]);
-        }
-    }
-    return found;
-}
+/* ==================================================================
+   SIMULATED SEARCH (search.html)
+   Reads ?q= from the GET form; a switch shows results or an error.
+   ================================================================== */
 
 function initSearch() {
-    var output = $('#search-output');
-    var summary = $('#search-summary');
-    var query;
-    var matches;
-    var message;
+    var params = new URLSearchParams( window.location.search );
+    var query = "";
 
-    if (output.length === 0) {
-        return;                       // not the search page
+    if ( $( "#search-results" ).length === 0 ) {
+        return; // not the search page
     }
 
-    // Read q= from the address bar and tidy it, so "  Payment " still matches.
-    // A GET form sends a space as +, and this turns it back.
-    query = new URLSearchParams(window.location.search).get('q');
-    if (!query) {
-        query = '';
+    // Trim whitespace and ignore capitals
+    if ( params.has( "q" ) ) {
+        query = params.get( "q" ).trim().toLowerCase();
     }
-    query = query.trim().toLowerCase();
 
-    // Arriving with no phrase is not a failed search, so it gets the prompt.
-    if (query === '') {
-        summary.text('Type a phrase in the search box above to look through your issues.');
+    $( "#topbar-search" ).val( params.get( "q" ) );
+
+    // An empty search shows the starting prompt and does not result in failure
+    if ( query === "" ) {
         return;
     }
 
-    // Anything not listed falls through and gets the friendly message.
-    switch (query) {
-    case KEYPHRASE:
-    case 'checkout':
-        matches = issuesInProject('checkout-service');
-        break;
-    case 'token':
-        matches = issuesInProject('api-gateway');
+    // Decide what to show using a switch statement
+    switch ( query ) {
+    case "payment":
+    case "checkout":
+        $( "#search-summary" ).text( "Found 2 issues matching \"" + query + "\"." );
+        $( "#search-results" ).show();
         break;
     default:
-        matches = [];
-    }
-
-    if (matches.length > 0) {
-        summary.text('Found ' + matches.length + ' issue' +
-                     (matches.length === 1 ? '' : 's') + ' matching your search.');
-        output.html('').append(buildResultsTable(matches));
-    } else {
-        // Name the problem and say what to try instead, the same way the
-        // report form does. From the "say exactly what needs fixing" feedback.
-        summary.text('No issues matched your search.');
-
-        message = $('<p>').html(
-            '<strong>No results found.</strong> Nothing in your projects matches that ' +
-            'phrase. Search is simulated in this prototype, so try the phrase "' +
-            KEYPHRASE + '" to see what a result set looks like, or '
-        );
-        message.append($('<a>').attr('href', 'list.html').text('browse all issues'));
-        message.append(' instead.');
-
-        output.html('').append($('<div>').addClass('alert').append(message));
+        $( "#search-summary" ).text( "No issues matched \"" + query + "\"." );
+        $( "#search-empty" ).show();
     }
 }
 
 
-/* Issue list filter */
-/* Interaction one, on the change event. This is the DOM traversal one: from
-   the filter bar across to the table, then down into each row's cells.
-   Makes the filter chips real, from the "filters should stay highlighted"
-   feedback. */
+/* ==================================================================
+   INTERACTION 1: Filter issues (list.html)
+   Event: change. Requirement: DOM traversal.
+   Modifies: shows/hides rows. Adds: filter chips, "no match" row.
+   Reference: https://api.jquery.com/category/traversing/
+   ================================================================== */
 
-/* What each chip says, keyed by the select it belongs to. */
-var FILTER_LABELS = {
-    'filter-project': 'Project',
-    'filter-role': 'My role',
-    'filter-status': 'Status',
-    'filter-severity': 'Severity'
-};
-
-/* Which column each filter reads, counting from zero. Role is missing because
-   the owner cell reads "You patched it", so rows carry data-role instead. */
-var FILTER_COLUMNS = {
-    'filter-project': 2,
-    'filter-severity': 3,
-    'filter-status': 4
-};
-
-/* The options read "Medium and above", so severity is a floor, not a match. */
+/* The severity options read as "Medium and above". Severity is a
+   minimum rather than an exact match. */
 var SEVERITY_RANK = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 };
 
-/* Traverse from the filter bar to the rows of the table beside it. */
-function issueRows() {
-    return $('#filter-bar').siblings('#issue-table').children('tbody').children('tr');
-}
+/* Does one row pass every filter the user has switched on? */
+function rowMatches( row, project, role, status, severity, text ) {
+    var title;
 
-/* Does this row survive every filter that is switched on? */
-function rowMatches(row, text) {
-    var keep = true;
+    if ( project !== "" && row.data( "project" ) !== project ) {
+        return false;
+    }
+    if ( role !== "" && row.data( "role" ) !== role ) {
+        return false;
+    }
+    if ( status !== "" && row.data( "status" ) !== status ) {
+        return false;
+    }
+    if ( severity !== "" && SEVERITY_RANK[ row.data( "severity" ) ] < SEVERITY_RANK[ severity ] ) {
+        return false;
+    }
 
-    $('#filter-bar').find('select').each(function () {
-        var wanted = $(this).val();
-        var cell;
-
-        if (wanted === '') {
-            return;                   // "All ..." - this filter is off
-        }
-
-        if (this.id === 'filter-role') {
-            if (row.attr('data-role') !== wanted) {
-                keep = false;
-            }
-            return;
-        }
-
-        // Into the row: its cells, then the one this filter reads. Both sides
-        // are upper-cased since the values mix codes and names.
-        cell = row.children('td').eq(FILTER_COLUMNS[this.id]).text().trim().toUpperCase();
-
-        if (this.id === 'filter-severity') {
-            if (SEVERITY_RANK[cell] < SEVERITY_RANK[wanted]) {
-                keep = false;
-            }
-        } else if (cell !== wanted.replace('_', ' ').toUpperCase()) {
-            keep = false;
-        }
-    });
-
-    // The text box matches the key and the title only.
-    if (keep && text !== '') {
-        var key = row.children('td').eq(0).text().toLowerCase();
-        var title = row.children('td').eq(1).text().toLowerCase();
-        if ((key + ' ' + title).indexOf(text) === -1) {
-            keep = false;
+    // The text box looks at the key and the title.
+    // .find(): get the descendants of the row that match a selector.
+    if ( text !== "" ) {
+        title = row.find( ".ticket-key" ).text() + " " + row.find( ".issue-table__title" ).text();
+        if ( title.toLowerCase().indexOf( text ) === -1 ) {
+            return false;
         }
     }
 
-    return keep;
+    return true;
 }
 
-/* One chip per filter that is switched on. */
-function renderChips() {
-    var chips = $('#filter-chips');
+/* One removable chip for every dropdown that is not on "All". */
+function showFilterChips() {
+    var chips = $( "#filter-chips" );
 
-    chips.html('');
+    chips.html( "" );
 
-    $('#filter-bar').find('select').each(function () {
+    // .each(): iterate over the dropdowns while executing a function for each one.
+    $( "#filter-bar" ).find( "select" ).each(function() {
+        var elem = $( this );
         var label;
         var choice;
-        var chip;
 
-        if ($(this).val() === '') {
-            return;
+        if ( elem.val() === "" ) {
+            return; // this filter is off
         }
 
-        label = FILTER_LABELS[this.id];
-        choice = $(this).find('option:selected').text().trim();
-
-        chip = $('<span>').addClass('filter-chip')
-                          .attr('data-for', this.id)
-                          .text(label + ': ' + choice + ' ');
-
-        chip.append(
-            $('<button>').attr('type', 'button')
-                         .html('&times;')
+        // .parent(): go up to the field around the dropdown and find its label.
+        // Then find the option picked, e.g. "Project: clamped-web".
+        // Referenced from the demo slides.
+        label = elem.parent().find( "label" ).text();
+        choice = elem.find( "option:selected" ).text();
+        chips.append(
+            "<span class='filter-chip' data-select='" + this.id + "'>" + label + ": " + choice +
+            " <button type='button' title='Remove this filter'>&times;</button></span>"
         );
-
-        chips.append(chip);
     });
 }
 
 function applyFilters() {
-    var text = $('#filter-search').val().trim().toLowerCase();
+    var project = $( "#filter-project" ).val();
+    var role = $( "#filter-role" ).val();
+    var status = $( "#filter-status" ).val();
+    var severity = $( "#filter-severity" ).val();
+    var text = $( "#filter-search" ).val().trim().toLowerCase();
     var visible = 0;
     var rows;
 
-    // Clear the "nothing matched" row left by a previous run.
-    $('#issue-table').find('tr.no-results').remove();
+    // Clear the "nothing matched" row left over from the last run.
+    $( "#issue-rows" ).find( ".no-results" ).remove();
 
-    rows = issueRows();
+    // DOM traversal. .children(): get the children of the table body
+    // that match a selector, so every row of the table.
+    rows = $( "#issue-rows" ).children( "tr" );
+    rows.each(function() {
+        var row = $( this );
 
-    rows.each(function () {
-        var row = $(this);
-
-        if (rowMatches(row, text)) {
-            row.show();               // modifies an existing element
+        // Modify: show or hide the existing row
+        if ( rowMatches( row, project, role, status, severity, text ) ) {
+            row.show();
             visible = visible + 1;
         } else {
             row.hide();
         }
     });
 
-    renderChips();
-    $('#result-count').html('<strong>' + visible + '</strong> of ' + rows.length + ' issues');
+    $( "#result-count" ).html( "<strong>" + visible + "</strong> of " + rows.length + " issues" );
+    showFilterChips();
 
-    // Adds a new element when the filters exclude everything.
-    if (visible === 0) {
-        $('#issue-table').children('tbody').append(
-            $('<tr>').addClass('no-results').append(
-                $('<td>').attr('colspan', 7)
-                         .text('No issues match these filters. Clear one to see more.')
-            )
+    // Add: a message row when the filters leave nothing to show.
+    if ( visible === 0 ) {
+        $( "#issue-rows" ).append(
+            "<tr class='no-results'><td colspan='7'>" +
+            "No issues match these filters. Remove one to see more.</td></tr>"
         );
     }
 }
 
 function initListFilter() {
-    if ($('#filter-bar').length === 0) {
-        return;                       // not the issue list
+    if ( $( "#filter-bar" ).length === 0 ) {
+        return; // not the issue list
     }
 
-    // The change event drives the whole thing.
-    $('#filter-bar').on('change', 'select', applyFilters);
-    $('#filter-bar').on('input', '#filter-search', applyFilters);
+    // Event: Any dropdown or text box change re-runs the filter.
+    $( "#filter-bar" ).on( "change", applyFilters );
 
-    // Filtering happens in place, so the form must not navigate away.
-    $('#filter-bar').on('submit', function (e) {
-        e.preventDefault();
+    // No page reload on submit
+    $( "#filter-bar" ).on( "submit", function( event ) {
+        event.preventDefault();
         applyFilters();
     });
 
-    // The chips are made by this script, so the handler goes on the container
-    // rather than on buttons that do not exist yet.
-    $('#filter-chips').on('click', 'button', function () {
-        var chip = $(this).closest('.filter-chip');
-        $('#' + chip.attr('data-for')).val('');
+    // Delegated handler since the chips are added by the script.
+    $( "#filter-chips" ).on( "click", "button", function() {
+        var selectId = $( this ).parent().data( "select" );
+        $( "#" + selectId ).val( "" );
         applyFilters();
     });
 
-    $('#clear-filters').on('click', function (e) {
-        e.preventDefault();
-        $('#filter-bar').find('select').val('');
-        $('#filter-search').val('');
+    $( "#clear-filters" ).on( "click", function( event ) {
+        event.preventDefault();
+        $( "#filter-bar" ).find( "select" ).val( "" );
+        $( "#filter-search" ).val( "" );
         applyFilters();
     });
 
-    // Run once so the count and chips match the filters the page loaded with.
     applyFilters();
 }
 
 
-/* Issue workflow */
-/* Interaction two, on the click event. This is the delegation one: advancing
-   the workflow replaces the button that advances it, so the next control does
-   not exist at load. One handler on the action bar catches them all. */
+/* ==================================================================
+   INTERACTION 2: Send for review (detail.html)
+   Event: click. Requirement: event delegation.
+   Modifies: status chip, timeline. Adds: "Remind Priya" button.
+   Reference: https://learn.jquery.com/events/event-delegation/
+   ================================================================== */
 
-/* What each step's button says, and which step follows it. */
-var NEXT_STEP = {
-    UNDER_REVIEW: { label: 'Confirm Fix and Verify', next: 'VERIFIED' },
-    VERIFIED: null
-};
+/* Hand the patched issue to its verifier. The user patched it, so they
+   cannot verify it themselves; a verifier like "Priya Nair" can. */
+function sendForReview() {
+    // Modify: finish the current timeline step and start Under Review.
+    $( "#workflow" ).children( ".is-current" ).removeClass( "is-current" ).addClass( "is-done" );
+    $( "#workflow" ).children( "[data-state='UNDER_REVIEW']" )
+        .addClass( "is-current" )
+        .append( " <span class='text-caption'>sent to Priya Nair just now</span>" );
 
-/* Today, in the two forms the timeline needs. */
-function todayParts() {
-    var now = new Date();
-    var month = now.getMonth() + 1;
-    var day = now.getDate();
-    var year = now.getFullYear();
+    // Modify: the status chip in the title row.
+    $( "#issue-status" )
+        .removeClass( "status-patched" )
+        .addClass( "status-under-review" )
+        .text( "UNDER REVIEW" );
 
-    return {
-        attribute: year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day,
-        shown: month + '/' + day + '/' + year
-    };
+    // Add: a new button for the next step, reminding the verifier.
+    $( "#workflow-next" ).html(
+        "<button type='button' class='btn btn--info' data-action='remind'>Remind Priya</button>"
+    );
+    $( "#workflow-note" ).text(
+        "Priya Nair is reviewing your fix. You will be notified when it is verified."
+    );
 }
 
-function advanceTo(state) {
-    var step = $('#workflow').children('li[data-state="' + state + '"]');
-    var stamp = todayParts();
-    var group = $('#workflow-actions');
-    var after = NEXT_STEP[state];
-
-    if (step.length === 0) {
-        return;
+/* Ask before deleting, since it cannot be undone. */
+function askToDelete( button ) {
+    if ( $( "#delete-confirm" ).length > 0 ) {
+        return; // already asking
     }
 
-    // The step that was current is finished, and the one reached takes over.
-    $('#workflow').children('li.is-current').removeClass('is-current').addClass('is-done');
-    step.addClass('is-current');
-
-    // Adds a date to the step just reached.
-    if (step.children('time').length === 0) {
-        step.append($('<time>').attr('datetime', stamp.attribute).text(stamp.shown));
-    }
-
-    // Modifies the status chip up in the title row.
-    $('#issue-status').removeClass(STATUS_CLASSES)
-                      .addClass(chipClass('status', state))
-                      .text(state.replace('_', ' '));
-
-    // Adds the button for the next step. This is what makes delegation
-    // necessary, since it did not exist when the page loaded.
-    group.find('[data-action="advance"]').remove();
-
-    if (after) {
-        group.prepend(
-            $('<button>').attr('type', 'button')
-                         .addClass('btn btn--info')
-                         .attr('data-action', 'advance')
-                         .attr('data-next', after.next)
-                         .text(after.label)
-        );
-    } else {
-        group.prepend(
-            $('<p>').addClass('action-bar__note')
-                    .text('Verified by Priya Nair. Nothing further is needed on this issue.')
-        );
-    }
-}
-
-/* The "Are you sure?" the Project 2 prototype could not build without JS.
-   From the "ask before actually deleting it" feedback. */
-function openDeleteConfirm(button) {
-    var panel;
-
-    if ($('#delete-confirm').length > 0) {
-        return;                       // already open
-    }
-
-    button.prop('disabled', true);    // modifies an existing element
-
-    panel = $('<div>').attr('id', 'delete-confirm').addClass('confirm-panel');
-    panel.append($('<p>').text(
-        'Delete CLM-139? This removes the issue, its notes and its role history. ' +
-        'Only a lead can do this, and it cannot be undone.'
-    ));
-    panel.append(
-        $('<button>').attr('type', 'button').addClass('btn btn--danger')
-                     .attr('data-action', 'delete-confirm').text('Yes, delete it')
+    button.hide();
+    $( "#issue-actions" ).append(
+        "<div class='confirm-panel' id='delete-confirm'>" +
+        "<p>Delete CLM-139? This removes the issue, its notes and its role history, " +
+        "and it cannot be undone.</p>" +
+        "<button type='button' class='btn btn--danger' data-action='delete-confirm'>Yes, delete it</button>" +
+        "<button type='button' class='btn' data-action='delete-cancel'>Keep it</button>" +
+        "</div>"
     );
-    panel.append(
-        $('<button>').attr('type', 'button').addClass('btn')
-                     .attr('data-action', 'delete-cancel').text('Keep it')
-    );
-
-    $('#issue-actions').append(panel);
 }
 
 function initIssueWorkflow() {
-    if ($('#issue-actions').length === 0) {
-        return;                       // not the issue page
+    if ( $( "#issue-actions" ).length === 0 ) {
+        return; // not the issue page
     }
 
-    // One delegated handler for every action in the bar, now and later.
-    $('#issue-actions').on('click', '[data-action]', function () {
-        var button = $(this);
-        var action = button.attr('data-action');
+    // Event delegation: handler is placed on the parent action bar and
+    // responds to clicks on the buttons inside it, including the
+    // "Remind Priya" button that replaces "Send for Review" once it's clicked.
+    $( "#issue-actions" ).on( "click", "button", function() {
+        var elem = $( this );
 
-        if (action === 'advance') {
-            advanceTo(button.attr('data-next'));
+        switch ( elem.data( "action" ) ) {
+        case "review":
+            sendForReview();
+            break;
 
-        } else if (action === 'delete') {
-            openDeleteConfirm(button);
-
-        } else if (action === 'delete-cancel') {
-            $('#delete-confirm').remove();
-            $('#issue-actions').find('[data-action="delete"]').prop('disabled', false);
-
-        } else if (action === 'delete-confirm') {
-            $('#delete-confirm').replaceWith(
-                $('<p>').addClass('action-bar__note').text(
-                    'CLM-139 would be deleted here. The prototype keeps it so you can ' +
-                    'carry on looking at it.'
-                )
+        case "remind":
+            elem.remove();
+            $( "#workflow-next" ).append(
+                "<span class='text-caption'>Reminder sent to Priya Nair.</span>"
             );
+            break;
+
+        case "delete":
+            askToDelete( elem );
+            break;
+
+        case "delete-cancel":
+            $( "#delete-confirm" ).remove();
+            $( "#issue-actions" ).find( "[data-action='delete']" ).show();
+            break;
+
+        case "delete-confirm":
+            $( "#delete-confirm" ).html(
+                "<p>CLM-139 has been deleted. <a href='list.html'>Back to My Issues</a></p>"
+            );
+            break;
         }
     });
 }
 
 
-/* Start everything once the page is ready. */
-$(document).ready(function () {
+/* Start everything once the page is ready. Each init checks whether its
+   page is the one loaded and returns if not. */
+$( document ).ready(function() {
     initSearch();
     initListFilter();
     initIssueWorkflow();

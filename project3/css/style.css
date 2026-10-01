@@ -397,14 +397,18 @@ legend + * { clear: both; }   /* clears the floated legend */
     border-bottom: 1px solid var(--line);
 }
 
-.topbar__search { flex: 1 1 260px; max-width: 420px; }
+/* The box and its Search button sit on one line. */
+.topbar__search { display: flex; gap: 0.4rem; flex: 1 1 260px; max-width: 420px; }
 
 .topbar__search input {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     padding: 0.35rem 0.6rem;
     border: 1px solid var(--line);
     border-radius: var(--radius);
 }
+
+.topbar__submit { flex: none; padding: 0.35rem 0.8rem; }
 
 .topbar__actions { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
 
@@ -715,31 +719,6 @@ legend + * { clear: both; }   /* clears the floated legend */
 .landing-footer p { margin: 0; }
 .landing-footer ul { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
 
-/* Read-only fields on the edit form: the issue's key and project, and the
-   event payload pasted in when it was reported. Greyed to match a disabled
-   button rather than looking like an empty field. */
-.form-field input[readonly],
-.form-field textarea[readonly] {
-    background-color: var(--surface-2);
-    color: var(--muted);
-    cursor: not-allowed;
-}
-
-/* Heads a value shown where a field would be. Not a <label>, because there is
-   no control under it to label. */
-.field-label { display: block; margin-bottom: 2px; font-size: 0.8rem; font-weight: 500; }
-
-/* A field replaced by the value it would have held, where the value moves
-   somewhere else. Status is the one that does: it moves through the action bar
-   on the issue page, not through a select on this form. */
-.static-value {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0;
-}
-
 /* States the script creates */
 /* The row added when the filters exclude everything. */
 .no-results td { color: var(--muted); font-style: italic; text-align: center; padding: 0.75rem; }
@@ -813,3 +792,7 @@ legend + * { clear: both; }   /* clears the floated legend */
     .hero-headline { font-size: 2rem; }
     .btn--block-mobile { width: 100%; }
 }
+
+/* Search page: both outcomes start hidden, and js/main.js shows one. */
+#search-results,
+#search-empty { display: none; }

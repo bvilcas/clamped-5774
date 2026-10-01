@@ -66,10 +66,11 @@
 
             <!-- Top bar -->
             <header class="topbar">
-                <form class="topbar__search" action="list.html" method="get">
-                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                <form class="topbar__search" action="search.html" method="get">
+                    <label class="visually-hidden" for="topbar-search">Search issues</label>
                     <input type="search" id="topbar-search" name="q"
                            placeholder="Search issues - try: payment">
+                    <button type="submit" class="btn btn--info topbar__submit">Search</button>
                 </form>
 
                 <div class="topbar__actions">
@@ -243,8 +244,8 @@
             </footer>
         </div>
     </div>
-    <!-- jQuery first, then this project's own behaviour. Both are external
-         files; there are no inline or embedded scripts anywhere. -->
+    <!-- jQuery first, then this project's script. Both are external files;
+         there are no inline or embedded scripts. -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/main.js"></script>
 </body>

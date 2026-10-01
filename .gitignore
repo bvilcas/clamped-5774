@@ -14,5 +14,8 @@ dist/
 .env
 .env.local
 
-# The submission archive is rebuilt from submission/ (see tools/README.md)
+# Submission archives are made locally for Canvas
 *.zip
+
+# Local checking and zipping scripts, not part of the site
+tools/

@@ -62,10 +62,11 @@
 
             <!-- Top bar -->
             <header class="topbar">
-                <form class="topbar__search" action="list.html" method="get">
-                    <label class="visually-hidden" for="topbar-search">Search pages, projects, issues</label>
+                <form class="topbar__search" action="search.html" method="get">
+                    <label class="visually-hidden" for="topbar-search">Search issues</label>
                     <input type="search" id="topbar-search" name="q"
                            placeholder="Search issues - try: payment">
+                    <button type="submit" class="btn btn--info topbar__submit">Search</button>
                 </form>
 
                 <div class="topbar__actions">
@@ -170,12 +171,8 @@
                      stay highlighted when in use" feedback. -->
                 <div class="result-summary">
                     <p id="result-count"><strong>7</strong> of 48 issues</p>
-                    <span id="filter-chips">
-                        <span class="filter-chip">
-                        Severity: Medium and above
-                        <button type="button">&times;</button>
-                    </span>
-                    </span>
+                    <!-- Filled by js/main.js with one chip per filter in use. -->
+                    <span id="filter-chips"></span>
                     <a id="clear-filters" href="list.html">Clear all filters</a>
                 </div>
 
@@ -199,7 +196,7 @@
                     <tbody id="issue-rows">
                         <!-- Row 1 is the issue just filed. Every row repeats the same
                              cells: key, title, project, severity, status, owner, due. -->
-                        <tr data-role="REPORTER">
+                        <tr data-project="checkout-service" data-severity="CRITICAL" data-status="REPORTED" data-role="REPORTER">
                             <td class="ticket-key">CLM-148</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Checkout returns 500 when a saved card has no billing address</a>
@@ -216,7 +213,7 @@
                             <td>9/28/2026</td>
                         </tr>
 
-                        <tr data-role="ASSIGNEE">
+                        <tr data-project="checkout-service" data-severity="CRITICAL" data-status="PATCHED" data-role="ASSIGNEE">
                             <td class="ticket-key">CLM-139</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">NullPointerException in PaymentService.processPayment</a>
@@ -234,7 +231,7 @@
                             <td>9/24/2026</td>
                         </tr>
 
-                        <tr data-role="VERIFIER">
+                        <tr data-project="clamped-web" data-severity="HIGH" data-status="PATCHED" data-role="VERIFIER">
                             <td class="ticket-key">CLM-137</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Session cookie is not cleared after logout</a>
@@ -251,7 +248,7 @@
                             <td>9/26/2026</td>
                         </tr>
 
-                        <tr data-role="">
+                        <tr data-project="api-gateway" data-severity="HIGH" data-status="IN_PROGRESS" data-role="">
                             <td class="ticket-key">CLM-134</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Refresh token retry storm when the access token expires</a>
@@ -269,7 +266,7 @@
                             <td>10/1/2026</td>
                         </tr>
 
-                        <tr data-role="">
+                        <tr data-project="api-gateway" data-severity="MEDIUM" data-status="REPORTED" data-role="">
                             <td class="ticket-key">CLM-131</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Rate limit exceeded for client IP 198.51.100.22</a>
@@ -282,7 +279,7 @@
                             <td>10/3/2026</td>
                         </tr>
 
-                        <tr data-role="ASSIGNEE">
+                        <tr data-project="clamped-web" data-severity="MEDIUM" data-status="IN_PROGRESS" data-role="ASSIGNEE">
                             <td class="ticket-key">CLM-128</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Team page loads member lists one project at a time</a>
@@ -299,7 +296,7 @@
                             <td>10/6/2026</td>
                         </tr>
 
-                        <tr data-role="VERIFIER">
+                        <tr data-project="clamped-web" data-severity="MEDIUM" data-status="VERIFIED" data-role="VERIFIER">
                             <td class="ticket-key">CLM-119</td>
                             <td>
                                 <a class="issue-table__title" href="detail.html">Duplicate notification emails when a role changes</a>
@@ -344,8 +341,8 @@
             </footer>
         </div>
     </div>
-    <!-- jQuery first, then this project's own behaviour. Both are external
-         files; there are no inline or embedded scripts anywhere. -->
+    <!-- jQuery first, then this project's script. Both are external files;
+         there are no inline or embedded scripts. -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/main.js"></script>
 </body>
